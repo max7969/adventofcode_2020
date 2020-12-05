@@ -29,11 +29,11 @@ namespace AdventOfCode.Domain.Day5
         private IEnumerable<int> ReadBoardingPass(IEnumerable<string> lines)
         {
             return lines.Select(x =>
-            {
-                var row = Convert.ToInt32(x.Substring(0, 7).Replace("B", "1").Replace("F", "0"), 2);
-                var column = Convert.ToInt32(x.Substring(7).Replace("R", "1").Replace("L", "0"), 2);
-                return new {row, column};
-            }).Select(x => x.row * 8 + x.column);
+                Convert.ToInt32(
+                    x.Replace("B", "1")
+                        .Replace("F", "0")
+                        .Replace("R", "1")
+                        .Replace("L", "0"), 2));
         }
     }
 }
