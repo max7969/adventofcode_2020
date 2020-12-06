@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AdvendOfCode.Domain\AdventOfCode.Domain.csproj" />
+    <ProjectReference Include="..\AdventOfCode.Domain\AdventOfCode.Domain.csproj" />
     <ProjectReference Include="..\ConsoleApp1\AdventOfCode.Domain.csproj" />
   </ItemGroup>
 
@@ -54,6 +54,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Day5\Resources\test.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Day6\Resources\input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Day6\Resources\test.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
