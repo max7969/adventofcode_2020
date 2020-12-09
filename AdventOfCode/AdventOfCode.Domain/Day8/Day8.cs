@@ -56,15 +56,29 @@ namespace AdventOfCode.Domain.Day8
             return (accumulator, endProperly);
         }
 
-        private static List<Node> ReadProgram(List<string> lines)
+        private List<List<Node>> GenerateAlternatives(List<Node> program)
+        {
+            List<List<Node>> alternatives = new List<List<Node>>();
+            foreach (var node in program)
+            {
+                if (node.Operation != "acc")
+                {
+                    var alternative = program.Select(x => x.Clone()).ToList();
+                    alternative[program.IndexOf(node)].Operation =
+                        alternative[program.IndexOf(node)].Operation == "jmp" ? "nop" : "jmp";
+                    alternatives.Add(alternative);
+                }
+            }
+            return alternatives;
+        }
+
+        private List<Node> ReadProgram(List<string> lines)
         {
             List<Node> nodes = new Node[lines.Count()].Select(x => new Node()).ToList();
             for (int i = 0; i < lines.Count(); i++)
             {
                 nodes[i].Operation = lines[i].Split(' ')[0];
                 nodes[i].Value = int.Parse(lines[i].Split(' ')[1]);
-                nodes[i].Previous = i == 0 ? nodes[lines.Count() - 1] : nodes[i - 1];
-                nodes[i].Next = i == lines.Count - 1 ? nodes[0] : nodes[i + 1];
             }
 
             return nodes;
@@ -75,14 +89,11 @@ namespace AdventOfCode.Domain.Day8
             public string Operation { get; set; }
             public int CountExecution { get; set; }
             public int Value { get; set; }
-            public Node Previous { get; set; }
-            public Node Next { get; set; }
-            public object Clone()
+            public Node Clone()
             {
                 return new Node
                 {
-                    CountExecution = CountExecution, Operation = Operation, Value = Value, Previous = Previous,
-                    Next = Next
+                    CountExecution = CountExecution, Operation = Operation, Value = Value
                 };
             }
         }
