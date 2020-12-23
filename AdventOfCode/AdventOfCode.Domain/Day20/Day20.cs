@@ -17,29 +17,58 @@ namespace AdventOfCode.Domain.Day20
         {
             var lines = FileReader.GetFileContent(filePath).ToList();
 
-            List<Tile> tiles = new List<Tile>();
-            for (int i = 0; i < lines.Count(); i = i + 12)
-            {
-                Tile tile = new Tile(long.Parse(Regex.Match(lines[i], "Tile ([0-9]+):").Groups[1].ToString()));
-                
-                for (int j = i + 1; j < i + 11; j++)
-                {
-                    tile.Content.Add(lines[j].Select(x => x.ToString()).ToList());
-                }
-                tiles.Add(tile);
-            }
-            tiles.ForEach(t => t.InitBorders());
+            var tiles = ExtractTiles(lines);
 
-            Dictionary<Tile, long> dico = new Dictionary<Tile, long>();
+            var dico = BuildPossibleMatchs(tiles);
+
+            var corners = dico.Where(x => x.Value.Count == 2).Select(x => x.Key.Id).ToList();
+            return corners.Aggregate((a,b) => a * b);
+        }
+
+        public long Compute2(string filePath)
+        {
+            var lines = FileReader.GetFileContent(filePath).ToList();
+            var tiles = ExtractTiles(lines);
+            var dico = BuildPossibleMatchs(tiles);
+
+            List<List<Tile>> puzzle = new List<List<Tile>>();
+            puzzle.Add(new List<Tile> { dico.FirstOrDefault(x => x.Value.Count == 2).Key });
+            
+
+            return 0;
+        }
+
+        private static Dictionary<Tile, List<Tile>> BuildPossibleMatchs(List<Tile> tiles)
+        {
+            Dictionary<Tile, List<Tile>> dico =
+                new Dictionary<Tile, List<Tile>>();
             foreach (var tile in tiles)
             {
                 var otherTile = tiles.Where(x => x.Id != tile.Id);
                 var possibleMatch = otherTile.SelectMany(x => x.Borders).Intersect(tile.Borders).Count();
-                dico.Add(tile, possibleMatch);
+                dico.Add(tile, otherTile.Where(x => x.Borders.Intersect(tile.Borders).Any()).ToList());
             }
 
-            var corners = dico.Where(x => x.Value == 4).Select(x => x.Key.Id).ToList();
-            return corners.Aggregate((a,b) => a * b);
+            return dico;
+        }
+
+        private static List<Tile> ExtractTiles(List<string> lines)
+        {
+            List<Tile> tiles = new List<Tile>();
+            for (int i = 0; i < lines.Count(); i = i + 12)
+            {
+                Tile tile = new Tile(long.Parse(Regex.Match(lines[i], "Tile ([0-9]+):").Groups[1].ToString()));
+
+                for (int j = i + 1; j < i + 11; j++)
+                {
+                    tile.Content.Add(lines[j].Select(x => x.ToString()).ToList());
+                }
+
+                tiles.Add(tile);
+            }
+
+            tiles.ForEach(t => t.InitBorders());
+            return tiles;
         }
 
         public class Tile
