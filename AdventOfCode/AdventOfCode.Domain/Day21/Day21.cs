@@ -18,8 +18,6 @@ namespace AdventOfCode.Domain.Day21
             var foods = ReadInput(lines);
             var allergensDic = ExtractAllergensDic(foods);
 
-            allergensDic.Select(x => x);
-
             return foods.SelectMany(x => x.Ingredients).Count();
         }
 
