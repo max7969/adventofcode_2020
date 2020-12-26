@@ -76,19 +76,19 @@ namespace AdventOfCode.Domain.Day23
         }
 
 
-        //[Fact]
-        //public void SolutionPart2()
-        //{
-        //    // Arrange 
-        //    string filePath =
-        //        $"{new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName}/Day23/Resources/input.txt";
-        //    Day23 day = new Day23();
+        [Fact]
+        public void SolutionPart2()
+        {
+            // Arrange 
+            string filePath =
+                $"{new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName}/Day23/Resources/input.txt";
+            Day23 day = new Day23();
 
-        //    // Act
-        //    var result = day.Compute(filePath);
+            // Act
+            var result = day.Compute2(filePath, 10000000);
 
-        //    // Result
-        //    _output.WriteLine(result.ToString());
-        //}
+            // Result
+            _output.WriteLine(result.ToString());
+        }
     }
 }

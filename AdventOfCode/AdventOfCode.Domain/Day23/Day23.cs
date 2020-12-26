@@ -17,12 +17,12 @@ namespace AdventOfCode.Domain.Day23
 
             var cups = line.ToCharArray().Select(x => int.Parse(x.ToString())).ToList();
 
-            var nodes = CreateNodes(cups);
+            var nodes = CreateNodes(cups).ToDictionary(x => x.Value);
 
             PlayCrabs(moves, nodes);
 
             string result = "";
-            Node printcursor = nodes.Single(x => x.Value == 1).Next;
+            Node printcursor = nodes.Values.Single(x => x.Value == 1).Next;
 
             while (printcursor.Value != 1)
             {
@@ -39,13 +39,14 @@ namespace AdventOfCode.Domain.Day23
 
             var cups = line.ToCharArray().Select(x => int.Parse(x.ToString())).ToList();
 
-            cups.AddRange(Enumerable.Range(10, 1000000).ToList());
+            cups.AddRange(Enumerable.Range(10, 1000000 - 9).ToList());
 
-            var nodes = CreateNodes(cups);
+
+            var nodes = CreateNodes(cups).ToDictionary(x => x.Value);
 
             PlayCrabs(moves, nodes);
             
-            return nodes.Single(x => x.Value == 1).Next.Value * nodes.Single(x => x.Value == 1).Next.Next.Value;
+            return nodes[1].Next.Value * nodes[1].Next.Next.Value;
         }
 
         private static List<Node> CreateNodes(List<int> cups)
@@ -72,9 +73,12 @@ namespace AdventOfCode.Domain.Day23
             return nodes;
         }
 
-        private static void PlayCrabs(int moves, List<Node> nodes)
+        private static void PlayCrabs(int moves, Dictionary<long, Node> nodes)
         {
-            Node current = nodes[0];
+            Node current = nodes.First().Value;
+
+            List<long> fourMaxValues = nodes.Keys.OrderByDescending(x => x).ToList().GetRange(0, 4);
+
             for (int i = 0; i < moves; i++)
             {
                 Node cutStart = current.Next;
@@ -86,25 +90,30 @@ namespace AdventOfCode.Domain.Day23
                 Node selected = null;
                 Node cursor = current.Next;
                 Node max = cursor;
-                while (selected == null)
+
+                List<long> cutValues = new List<long>();
+                cutValues.Add(cutStart.Value);
+                cutValues.Add(cutStart.Next.Value);
+                cutValues.Add(cutStop.Value);
+
+                long maxAvailable = fourMaxValues.Where(x => !cutValues.Contains(x)).Max();
+
+                List<long> searchedValues = new List<long>();
+                for (long j=0; j<4;j++)
                 {
-                    max = cursor.Value > max.Value ? cursor : max;
-
-                    if (cursor == current)
+                    if (searchValue - j > 0)
                     {
-                        searchValue = searchValue - 1;
+                        searchedValues.Add(searchValue - j);
                     }
+                }
+                List<long> selectedIndexes = searchedValues.Where(x => !cutValues.Contains(x)).ToList();
 
-                    if (cursor.Value == searchValue)
-                    {
-                        selected = cursor;
-                    }
-                    else if (searchValue <= -1)
-                    {
-                        selected = max;
-                    }
-
-                    cursor = cursor.Next;
+                if (!selectedIndexes.Any())
+                {
+                    selected = nodes[maxAvailable];
+                } else
+                {
+                    selected = nodes[selectedIndexes.Max()];
                 }
 
                 selected.Next.Previous = cutStop;
